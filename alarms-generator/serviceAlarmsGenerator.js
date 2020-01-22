@@ -96,7 +96,6 @@ const getNodeModulesFiles = (dir, files_) => {
 };
 
 const getAlarmsCloudFormationFile = allFiles => {
-    // let alarms = [];
     let alarmsMap = new Map();
 
     return new Promise((resolve, reject) => {
@@ -129,10 +128,6 @@ const getAlarmsCloudFormationFile = allFiles => {
                                                 let alarmName = getErrorName(e);
                                                 let serviceName = getServiceName(file);
                                                 if (alarmName !== '' && serviceName !== '') {
-                                                    // alarms.push({
-                                                    //     alarmName,
-                                                    //     serviceName
-                                                    // });
                                                     if (alarmsMap.has(alarmName)) {
                                                         let serviceArray = alarmsMap.get(alarmName);
                                                         const found = serviceArray.find(name => name === serviceName);
@@ -175,10 +170,7 @@ const getAlarmsCloudFormationFile = allFiles => {
 
         Promise.all(promises)
             .then(() => {
-                // printDebugMessage(`There are ${alarms.length} CloudWatch Alarms`);
-                // printDebugMessage('Alarms/Service Name Pairs: ' + JSON.stringify(alarms));
                 printDebugMessage('Total Count for Alarms Map: ' + alarmsMap.size);
-                printDebugMessage('Maps JSON: ' + JSON.stringify(alarmsMap.entries()));
 
                 let i, j;
                 let chunk = 200;
@@ -197,14 +189,14 @@ const getAlarmsCloudFormationFile = allFiles => {
                 resolve(alarmsData);
             })
             .catch(error => {
-                printDebugMessage('Failed to read a file: ' + error);
+                printDebugMessage('Error occurred: ' + error);
                 reject(error);
             });
     });
 };
 
 const printDebugMessage = message => {
-    if (args.debugFlag) {
+    if (args.debugFlag === 'true') {
         console.log(message);
     }
 };
@@ -212,7 +204,7 @@ const printDebugMessage = message => {
 const isExcludedFile = (fileName) => {
     let found = excludedFiles.find(f => fileName.endsWith(f));
     if (found) {
-        console.log('found a file that was excluded: ', fileName);
+        printDebugMessage('Found a file that was excluded: ' + fileName);
     }
     return found;
 };
@@ -333,7 +325,7 @@ const npmInstallDependencies = (services) => {
             npmInstallPromises.push(
                 new Promise((resolve, reject) => {
                     changeDirectory(service);
-                    if (args.installDependencies) {
+                    if (args.installDependencies === 'true') {
                         printDebugMessage(`running npm i for ${service}`);
                         runShellCommand(`npm i`)
                             .then(() => {
@@ -392,7 +384,8 @@ const startProcessing = (params) => {
                             alarmDataArray.forEach(alarmFileObj => {
                                 let { fileIndex, alarms } = alarmFileObj;
                                 let obj = JSON.parse(alarms);
-                                writeFile(`${args.directory}/Deployment/${args.projectName.replace(/ /g, '')}_Alarms_${fileIndex}.json`, obj);
+                                printDebugMessage('Complete alarms file: ' + JSON.stringify(obj));
+                                writeFile(`${args.directory}/Deployment/${args.projectName.replace(/ /g, '')}_Alarms${fileIndex === 0 ? '' : fileIndex}.json`, obj);
                             });
                         })
                         .catch(getAlarmsFileError => {
