@@ -1,0 +1,26 @@
+{
+    "name": "alarms-generator",
+    "version": "1.0.1",
+    "private": true,
+    "description": "Generate CF CloudWatch Alarms File",
+    "main": "serviceAlarmsGenerator.js",
+    "keywords": [
+        "Variables",
+        "Octopus",
+        "DevOps"
+    ],
+    "dependencies": {
+        "commander": "2.19.0",
+        "dotenv": "8.0.0"
+    },
+    "devDependencies": {
+        "nyc": "^14.1.1"
+    },
+    "scripts": {
+        "linter": "eslint .",
+        "test": "node serviceAlarmsGenerator.js run -p /Users/nader_b/Development/Subway/Order-Integration -n 'Order Integration' -b developing/1.2.0 -d true -i true",
+        "tdd": "nodemon --exec nyc --reporter=text --reporter=lcov npm run test"
+    },
+    "author": "Bruno Nader",
+    "license": "ISC"
+}
