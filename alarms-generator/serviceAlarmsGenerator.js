@@ -326,8 +326,8 @@ const npmInstallDependencies = (services) => {
                 new Promise((resolve, reject) => {
                     changeDirectory(service);
                     if (args.installDependencies === 'true') {
-                        printDebugMessage(`running npm i for ${service}`);
-                        runShellCommand(`npm i`)
+                        printDebugMessage(`running npm update for ${service}`);
+                        runShellCommand(`npm update`)
                             .then(() => {
                                 printDebugMessage(`finished installing dependencies for ${service}`);
                                 resolve();
@@ -337,7 +337,7 @@ const npmInstallDependencies = (services) => {
                                 reject(error);
                             });
                     } else {
-                        printDebugMessage(`skipping npm i for ${service}`);
+                        printDebugMessage(`skipping npm update for ${service}`);
                         resolve();
                     }
                 })
